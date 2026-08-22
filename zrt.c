@@ -1,5 +1,16 @@
-#include <stdio.h>
 #include "zrt.h"
+#include "syscalls.h"
+
+static int zrt_getchar(void) {
+    char c;
+    long n = sys_read(0, &c, 1);
+    if (n <= 0) return -1; // EOF
+    return (unsigned char)c;
+}
+
+static void zrt_putchar(char c) {
+    sys_write(1, &c, 1);
+}
 
 void zrt_execute(const char *code) {
     unsigned char tape[ZRT_TAPE_SIZE] = {0};
@@ -23,11 +34,11 @@ void zrt_execute(const char *code) {
                 (*ptr)--;
                 break;
             case '.':
-                putchar(*ptr);
+                zrt_putchar((char)*ptr);
                 break;
             case ',': {
-                int c = getchar();
-                if (c != EOF) *ptr = (unsigned char)c;
+                int c = zrt_getchar();
+                if (c != -1) *ptr = (unsigned char)c;
                 break;
             }
             case '[':
