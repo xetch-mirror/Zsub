@@ -5,19 +5,19 @@
 
 static char g_buf[ZSUB_BUF_SIZE];
 
-static long zsub_strlen(const char *s) {
+static long zsub_strlen(char *s) {
     long n = 0;
     while (s[n] != '\0') n++;
     return n;
 }
 
-static void zsub_err(const char *msg) {
+static void zsub_err(char *msg) {
     sys_write(2, msg, zsub_strlen(msg));
 }
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        const char *hello_world =
+        char *hello_world =
             "+++++ +++++ [ > +++++ ++ > +++++ +++++ > +++ > + <<<< - ] "
             "> ++ . > + . +++++ ++ . . +++ . > ++ . << +++++ +++++ +++++ . "
             "> . +++ . ----- - . ----- --- . > + . > .";
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    const char *path = argv[1];
+    char *path = argv[1];
     long len = zsub_strlen(path);
 
     if (len < 2 || path[len - 2] != '.' || path[len - 1] != 'x') {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int fd = sys_open(path, 0 /* O_RDONLY */, 0);
+    int fd = sys_open(path, O_RDONLY, 0);
     if (fd < 0) {
         zsub_err("zsub: could not open file\n");
         return 1;
